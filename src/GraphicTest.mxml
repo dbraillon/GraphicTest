@@ -33,41 +33,54 @@
 			
 			private function applicationRender():void
 			{
-				var squareSize:uint = (myCanvas.height > myCanvas.width) ? myCanvas.width / 10 : myCanvas.height / 10;
+				var nx:uint = 28;
+				var ny:uint = 40/2;
+				
+				var squareSize:uint = (myCanvas.height / ny > myCanvas.width / nx) ? myCanvas.width / (nx/2+1) : myCanvas.height / (ny/2+1);
 				var w:uint = myCanvas.width;
 				var h:uint = myCanvas.height;
 				
 				var dx:uint;
-				if((dx = w - squareSize * 10) > 0)
+				if((dx = w - squareSize /2 * (nx+1)) > 0)
 				{
 					dx = dx * .5;
 				}
 				
 				var dy:uint;
-				if((dy = h - squareSize * 10) > 0)
+				if((dy = h - squareSize /2 * (ny+1)) > 0)
 				{
 					dy = dy * .5;
 				}
 				
 				myCanvas.graphics.clear();
 				
-				var i:int;
-				for(i = 0; i < 10; i++)
+				var j:int;
+				for(j = 0; j < ny; j++)
 				{
-					var j:int;
-					for(j = 0; j < 10; j++)
+					var i:int;
+					for(i = 0; i < nx; i++)
 					{
 						//myCanvas.graphics.beginFill(0x000000, 1.0);
 						//myCanvas.graphics.drawRect(j * squareSize, i * squareSize, squareSize, squareSize);
 						
-						myCanvas.graphics.beginFill(0x000000, 1.0);
-						
+						myCanvas.graphics.beginFill(0xFF0000, 1.0);
 						myCanvas.graphics.lineStyle(0, 0, .5);
-						myCanvas.graphics.moveTo(dx + (squareSize) * i + squareSize / 2, dy + squareSize * j);
-						myCanvas.graphics.lineTo(dx + (squareSize) * i + squareSize / 2, dy + squareSize * j);
-						myCanvas.graphics.lineTo(dx + (squareSize) * i + squareSize,	 dy + squareSize * j + squareSize / 2);
-						myCanvas.graphics.lineTo(dx + (squareSize) * i + squareSize / 2, dy + squareSize * j + squareSize);
-						myCanvas.graphics.lineTo(dx + (squareSize) * i, 				 dy + squareSize * j + squareSize / 2);
+						
+						var ix:int = 0;
+						var iy:int = 0;
+						if(i % 2 == 1)
+						{
+							ix = 0;//squareSize / 2;
+							iy = squareSize / 4;
+							
+							myCanvas.graphics.beginFill(0x0000FF, 1.0);
+						}
+						
+						myCanvas.graphics.moveTo(dx + (squareSize/2) * i + squareSize / 2 - ix, dy + squareSize /2 * j + iy);
+						myCanvas.graphics.lineTo(dx + (squareSize/2) * i + squareSize / 2 - ix, dy + squareSize /2 * j + iy);
+						myCanvas.graphics.lineTo(dx + (squareSize/2) * i + squareSize - ix,	 dy + squareSize /2 * j + squareSize / 4 + iy);
+						myCanvas.graphics.lineTo(dx + (squareSize/2) * i + squareSize / 2 - ix, dy + squareSize /2 * j + squareSize / 2 + iy);
+						myCanvas.graphics.lineTo(dx + (squareSize/2) * i - ix, 				 dy + squareSize /2 * j + squareSize / 4 + iy);
 						
 						myCanvas.graphics.endFill();
 					}
