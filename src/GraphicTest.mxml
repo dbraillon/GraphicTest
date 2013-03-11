@@ -4,8 +4,7 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
 					   creationComplete="application_creationCompleteHandler(event)">
 	
-	<mx:Canvas id="myCanvas" borderStyle="solid" height="100%" width="100%"/>
-	
+	<s:Group id="canvas" height="100%" width="100%"/>
 	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
@@ -13,80 +12,85 @@
 	
 	<fx:Script>
 		<![CDATA[
+			import com.dbraillon.Map;
+			
 			import mx.events.FlexEvent;
 
-			private var timer:Timer;
+			private var _timer:Timer;
+			private var _map:Map;
+			
+			private var _squareSize:Number;
 			
 			protected function application_creationCompleteHandler(event:FlexEvent):void
 			{
-				timer = new Timer(10);
-				timer.addEventListener(TimerEvent.TIMER, timer_updateHandler);
-				timer.start();
+				_timer = new Timer(10);
+				_timer.addEventListener(TimerEvent.TIMER, timer_tickHandler);
+				_timer.start();
 				
+				applicationInitialize();
+			}
+			
+			protected function timer_tickHandler(event:TimerEvent):void
+			{
+				applicationUpdate();
 				applicationRender();
 			}
 			
-			protected function timer_updateHandler(event:TimerEvent):void
+			private function applicationInitialize():void
 			{
-				applicationRender();
+				_map = new Map();
+			}
+			
+			private function applicationUpdate():void
+			{
+				if(canvas.height / (_map.HEIGHT * .25 + .25) > canvas.width / (_map.WIDTH + .5))
+				{
+					_squareSize = canvas.width / (_map.WIDTH + .5);
+					_map.restX = 0;
+					_map.restY = (canvas.height - _squareSize * (_map.HEIGHT * .25 + .25)) * .5; 
+				}
+				else
+				{
+					_squareSize = canvas.height / (_map.HEIGHT * .25 + .25);
+					_map.restX = (canvas.width - _squareSize * (_map.WIDTH + .5)) * .5;
+					_map.restY = 0;
+				}
 			}
 			
 			private function applicationRender():void
 			{
-				var nx:uint = 28;
-				var ny:uint = 40/2;
+				canvas.graphics.clear();
 				
-				var squareSize:uint = (myCanvas.height / ny > myCanvas.width / nx) ? myCanvas.width / (nx/2+1) : myCanvas.height / (ny/2+1);
-				var w:uint = myCanvas.width;
-				var h:uint = myCanvas.height;
-				
-				var dx:uint;
-				if((dx = w - squareSize /2 * (nx+1)) > 0)
+				for(var j:int = 0; j < _map.HEIGHT; j++)
 				{
-					dx = dx * .5;
-				}
-				
-				var dy:uint;
-				if((dy = h - squareSize /2 * (ny+1)) > 0)
-				{
-					dy = dy * .5;
-				}
-				
-				myCanvas.graphics.clear();
-				
-				var j:int;
-				for(j = 0; j < ny; j++)
-				{
-					var i:int;
-					for(i = 0; i < nx; i++)
+					for(var i:int = 0; i < _map.WIDTH; i++)
 					{
-						//myCanvas.graphics.beginFill(0x000000, 1.0);
-						//myCanvas.graphics.drawRect(j * squareSize, i * squareSize, squareSize, squareSize);
+						//canvas.graphics.lineStyle(0, 0, .5);
 						
-						myCanvas.graphics.beginFill(0xFF0000, 1.0);
-						myCanvas.graphics.lineStyle(0, 0, .5);
-						
-						var ix:int = 0;
-						var iy:int = 0;
-						if(i % 2 == 1)
+						if(j % 2 == 0)
 						{
-							ix = 0;//squareSize / 2;
-							iy = squareSize / 4;
+							canvas.graphics.beginFill(0xFF0000, 1.0);
 							
-							myCanvas.graphics.beginFill(0x0000FF, 1.0);
+							canvas.graphics.moveTo(_squareSize * i + _map.restX + _squareSize * .5	, _squareSize * .25 * j + _map.restY);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX + _squareSize * .5	, _squareSize * .25 * j + _map.restY);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX + _squareSize		, _squareSize * .25 * j + _map.restY + _squareSize * .5 * .5);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX + _squareSize * .5	, _squareSize * .25 * j + _map.restY + _squareSize * .5);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX						, _squareSize * .25 * j + _map.restY + _squareSize * .5 * .5);
+						}
+						else
+						{
+							canvas.graphics.beginFill(0x0000FF, 1.0);
+							
+							canvas.graphics.moveTo(_squareSize * i + _map.restX + _squareSize		, _squareSize * .25 * j + _map.restY);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX + _squareSize		, _squareSize * .25 * j + _map.restY);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX + _squareSize * 1.5	, _squareSize * .25 * j + _map.restY + _squareSize * .5 * .5);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX + _squareSize		, _squareSize * .25 * j + _map.restY + _squareSize * .5);
+							canvas.graphics.lineTo(_squareSize * i + _map.restX + _squareSize * .5	, _squareSize * .25 * j + _map.restY + _squareSize * .5 * .5);
 						}
 						
-						myCanvas.graphics.moveTo(dx + (squareSize/2) * i + squareSize / 2 - ix, dy + squareSize /2 * j + iy);
-						myCanvas.graphics.lineTo(dx + (squareSize/2) * i + squareSize / 2 - ix, dy + squareSize /2 * j + iy);
-						myCanvas.graphics.lineTo(dx + (squareSize/2) * i + squareSize - ix,	 dy + squareSize /2 * j + squareSize / 4 + iy);
-						myCanvas.graphics.lineTo(dx + (squareSize/2) * i + squareSize / 2 - ix, dy + squareSize /2 * j + squareSize / 2 + iy);
-						myCanvas.graphics.lineTo(dx + (squareSize/2) * i - ix, 				 dy + squareSize /2 * j + squareSize / 4 + iy);
-						
-						myCanvas.graphics.endFill();
+						canvas.graphics.endFill();
 					}
 				}
-				
-				myCanvas.graphics.endFill();
 			}
 			
 		]]>
