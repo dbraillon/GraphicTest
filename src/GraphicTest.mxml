@@ -4,7 +4,7 @@
 					   xmlns:mx="library://ns.adobe.com/flex/mx"
 					   creationComplete="application_creationCompleteHandler(event)">
 	
-	<s:Group id="canvas" height="100%" width="100%"/>
+	<s:Group id="canvas" height="100%" width="100%" click="canvas_clickHandler(event)"/>
 	
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
@@ -91,6 +91,16 @@
 						canvas.graphics.endFill();
 					}
 				}
+			}
+			
+			protected function canvas_clickHandler(event:MouseEvent):void
+			{
+				var x:uint = event.stageX;
+				var y:uint = event.stageY;
+				
+				
+				
+				trace(event);
 			}
 			
 		]]>

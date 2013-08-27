@@ -1,5 +1,7 @@
 package com.dbraillon
 {
+	import flash.filesystem.File;
+
 	public class Map
 	{
 		public const WIDTH  : uint = 14;
@@ -8,8 +10,13 @@ package com.dbraillon
 		private var _restX : Number;
 		private var _restY : Number;
 		
+		[Embed(source="first.txt", mimeType="application/octet-stream")]
+		private var _file : Class;
+		
 		public function Map()
 		{
+			
+			
 			_restX = 0;
 			_restY = 0;
 		}
